@@ -1,0 +1,188 @@
+:root {
+  --realm-bg: #e8f1ff;
+  --text-color: #1a2a44;
+  --primary-color: #4169e1;
+  --secondary-color: #00ced1;
+  --danger-color: #ff4500;
+  --warning-color: #ff8c00;
+  --shadow-depth: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+body.dark-mode {
+  --realm-bg: #0a1428;
+  --text-color: #e0e6e9;
+  --primary-color: #87cefa;
+  --secondary-color: #40e0d0;
+  --danger-color: #ff6347;
+  --warning-color: #ffa500;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background: var(--realm-bg);
+  color: var(--text-color);
+  font-family: 'Georgia', serif;
+}
+
+.realm {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(255,255,255,0.8);
+  border-radius: 15px;
+  box-shadow: var(--shadow-depth);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-size: 2.5em;
+  color: var(--primary-color);
+}
+
+.lord-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+#essence, #rank {
+  font-weight: bold;
+}
+
+#progress-bar {
+  width: 100px;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#progress-fill {
+  height: 100%;
+  background: var(--primary-color);
+  width: 0;
+  transition: width 0.5s ease;
+}
+
+#theme-toggle, #voice-btn, #guild-btn {
+  background: none;
+  border: none;
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+#theme-toggle:hover, #voice-btn:hover, #guild-btn:hover {
+  transform: scale(1.2);
+}
+
+#quest-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+#quest-input, #quest-due-date, #quest-priority, #quest-realm {
+  padding: 10px;
+  border: 2px solid var(--text-color);
+  border-radius: 5px;
+  font-size: 1em;
+  flex-grow: 1;
+  min-width: 120px;
+}
+
+button {
+  padding: 10px 15px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #3351b3;
+}
+
+#quest-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-rune {
+  background: #6a8299;
+  padding: 8px 12px;
+}
+
+.filter-rune.active {
+  background: var(--primary-color);
+}
+
+#quest-list {
+  list-style: none;
+  padding: 0;
+}
+
+.quest-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 10px;
+  background: rgba(255,255,255,0.5);
+  border-radius: 10px;
+  box-shadow: var(--shadow-depth);
+  transition: transform 0.3s ease;
+}
+
+.quest-item.completed {
+  background: var(--secondary-color);
+  opacity: 0.85;
+}
+
+.quest-item.overdue {
+  border: 2px solid var(--warning-color);
+}
+
+.quest-item span {
+  flex-grow: 1;
+}
+
+.quest-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.complete-btn.completed {
+  background: var(--secondary-color);
+}
+
+.delete-btn {
+  background: var(--danger-color);
+}
+
+#guild-lodge {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 10px;
+}
+
+#guild-scrolls {
+  list-style: none;
+  padding: 0;
+}
+
+#guild-scrolls li {
+  padding: 5px 0;
+}

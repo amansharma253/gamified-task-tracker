@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuestMaster</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="realm">
+    <header>
+      <h1>QuestMaster</h1>
+      <div class="lord-info">
+        <span id="essence">Essence: 0</span>
+        <div id="progress-bar"><div id="progress-fill"></div></div>
+        <span id="rank">Rank: Outcast</span>
+        <button id="theme-toggle">🌙</button>
+        <button id="voice-btn">🎙️</button>
+        <button id="guild-btn">Guild</button>
+      </div>
+    </header>
+    <section id="quest-hub">
+      <form id="quest-form">
+        <input type="text" id="quest-input" placeholder="Forge a Quest" required>
+        <input type="date" id="quest-due-date">
+        <select id="quest-priority">
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+        <select id="quest-realm">
+          <option value="Work">Work</option>
+          <option value="Personal">Personal</option>
+          <option value="Fun">Fun</option>
+        </select>
+        <button type="submit">Forge</button>
+      </form>
+      <div id="quest-filters">
+        <button class="filter-rune active" data-filter="All">All</button>
+        <button class="filter-rune" data-filter="Work">Work</button>
+        <button class="filter-rune" data-filter="Personal">Personal</button>
+        <button class="filter-rune" data-filter="Fun">Fun</button>
+        <button class="filter-rune" data-filter="Completed">Completed</button>
+      </div>
+      <ul id="quest-list"></ul>
+      <div id="guild-lodge" style="display: none;">
+        <h3>Guild Lodge</h3>
+        <ul id="guild-scrolls"></ul>
+        <input id="guild-scroll" placeholder="Etch a Scroll">
+        <button id="etch-scroll">Etch</button>
+        <button id="invite-ally">Invite Ally</button>
+      </div>
+    </section>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/idb@7.1.1/build/umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
