@@ -20,245 +20,37 @@
 - Gamification: XP, levels, streaks, badges, weekly challenge
 - Local-first persistence (no backend)
 
-> Note: The rest of this README contains legacy v2 (vanilla JS) documentation kept for archive; it does not reflect the current v3 app.
-
-## ✨ Features
-
-### Core Functionality
-
-- ✅ **Create, Read, Update, Delete Tasks** - Full CRUD operations with instant persistence
-- ✅ **Task Organization** - Organize tasks by projects (Work, Personal, Learning)
-- ✅ **Priority Levels** - Set High/Medium/Low priority for each task
-- ✅ **Due Dates** - Track task deadlines with automatic overdue detection
-- ✅ **Task Descriptions** - Add detailed notes to any task
-- ✅ **Tags/Labels** - Flexible tagging system for better organization (comma-separated)
-- ✅ **Recurring Tasks** - Set daily, weekly, or monthly recurrence
-- ✅ **PWA Support** - Install as app, works offline with service worker
-
-### Smart Filtering & Sorting
-
-- 🔍 **Real-time Search** - Instantly filter tasks by name or description
-- 📊 **Multiple Views** - List, Board (Kanban), Calendar, and Analytics
-- 🎯 **Project Filtering** - Filter by Work, Personal, or Learning
-- 📈 **Sort Options** - Sort by Due Date, Priority, Name, or Manual order
-
-### Inline Quick Editing
-
-- ✏️ **Double-click Name** - Edit task name inline
-- 🎯 **Click Priority** - Cycle through Low → Medium → High
-- 📅 **Click Due Date** - Edit with inline date picker
-- 🏷️ **Click Tags** - Edit tags inline
-
-### Batch Actions
-
-- ☑️ **Selection Mode** - Toggle to select multiple tasks
-- ✅ **Select All** - Select all visible tasks (Cmd/Ctrl+A)
-- 🗑️ **Bulk Delete** - Delete selected tasks with undo support
-- ✓ **Bulk Complete** - Mark selected tasks as complete
-
-### Undo Support
-
-- ↩️ **Undo Deletions** - Restore accidentally deleted tasks
-- ⌨️ **Cmd/Ctrl + Z** - Global undo shortcut
-- 🔔 **Toast Actions** - Click "Undo" in toast notifications
-
-### Gamification
-
-- 🎮 **XP System** - Earn XP for completing tasks (10 base + priority bonus)
-- 📊 **Leveling** - Level up as you accumulate XP
-- 🔥 **Streaks** - Build daily completion streaks
-- 🏅 **Badges** - Unlock achievements (First Task, 10 Tasks, 50 Tasks, 100 Tasks, High Priority Hunter, Streak Master)
-- 🎯 **Weekly Quests** - Complete high-priority tasks challenge
-
-### Analytics & Insights
-
-- 📈 **Completion Rate** - Track your task completion percentage
-- 🎯 **Productivity Score** - Calculated score (0-100) based on completion and priority
-- 📅 **Weekly Activity** - See how many tasks you created/completed this week
-- 🏆 **Priority Analysis** - Understand your workload intensity
-- 🏷️ **Top Tags** - Discover your most-used tags
-- 📊 **Project Breakdown** - Visualize task distribution across projects
-
-### User Experience
-
-- 🌑 **Premium Dark UI** - Dark theme by default (single theme)
-- 📐 **Compact Mode** - Dense layout for power users
-- ⌨️ **Keyboard Shortcuts** - Power-user shortcuts for efficiency
-- 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
-- 💾 **Offline First** - All data stored locally with IndexedDB
-- 🎨 **Modern UI** - Clean, professional design with smooth animations
-- 🎓 **Step-by-Step Onboarding** - Guided tour for new users
-
-### Data Management
-
-- 📥 **Import Backup** - Upload a backup file you previously exported
-- 📤 **Export Backup** - Download a TaskPro backup file (for backup/transfer)
-- 💾 **Auto-save** - All changes are automatically saved
-- 🔒 **Data Privacy** - Your data never leaves your device
-
-## 🚀 Quick Start
+## 🚀 Quick start (v3)
 
 ### Prerequisites
 
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Node.js 18+ (for building production version)
-- No installation required for development!
+- Node.js 18+
 
-### Running Locally (Development)
-
-1. **Clone the repository**
-
-   ```bash
-   git clone https://github.com/amansharma253/gamified-task-tracker.git
-   cd gamified-task-tracker
-   ```
-
-2. **Start a local server**
-
-   ```bash
-   # Using Python 3
-   python3 -m http.server 8000
-
-   # Or using npm
-   npm run dev
-
-   # Or using Node.js
-   npx http-server
-
-   # Or using PHP
-   php -S localhost:8000
-   ```
-
-3. **Open in your browser**
-   ```
-   http://localhost:8000
-   ```
-
-### Building for Production
+### Run locally
 
 ```bash
-# Install dependencies
 npm install
+npm run dev
+```
 
-# Build optimized bundle
+Open `http://localhost:5173`.
+
+### Build & preview
+
+```bash
 npm run build
-
-# Preview production build
 npm run preview
 ```
 
-**Build output:**
-- Minified JavaScript bundle (~60-70% smaller)
-- Minified CSS
-- Optimized for deployment
-- Service worker for offline support
+## Notes
 
-That's it! No complex build configuration needed.
+- Dark-only UI (by design)
+- Local-first: data is stored in IndexedDB via Dexie
+- No backend / no auth
 
-## 💡 Usage Guide
+## Legacy v2 docs
 
-### Creating a Task
-
-1. Click **"+ New Task"** button or press **Cmd/Ctrl + N**
-2. Fill in the task details:
-   - **Task Name** (required)
-   - **Description** (optional)
-   - **Priority** (Low, Medium, High)
-   - **Project** (Work, Personal, Learning)
-   - **Due Date** (optional)
-   - **Tags** (comma-separated, e.g., "urgent, backend, design")
-3. Click **"Save Task"**
-
-### Managing Tasks
-
-- **Mark Complete** - Click the checkbox next to a task
-- **Edit** - Click the ✏️ icon
-- **Delete** - Click the 🗑️ icon
-- **Search** - Use the search bar to find tasks instantly
-- **Filter** - Select a project or view from the sidebar
-
-### Sorting & Filtering
-
-- **Sort by Due Date** - See what's coming up
-- **Sort by Priority** - Focus on important work
-- **Sort by Name** - Alphabetical organization
-- **Filter by View** - Today/Pending/Completed
-- **Filter by Project** - Stay focused on one area
-
-### Analytics
-
-1. Click the **📊 Analytics** button in the header
-2. View your:
-   - Completion rate percentage
-   - Productivity score
-   - Weekly activity metrics
-   - Priority analysis
-   - Top used tags
-   - Project distribution
-   - Gamification stats (XP, level, streaks, badges)
-
-### Visual Feedback
-
-- **XP Bubbles** - Animated XP gain appears when completing tasks
-- **Level-Up Confetti** - Optional celebration when reaching a new level
-- **Toast Notifications** - Smooth slide-in messages for actions (with undo support)
-- **Micro-interactions** - Subtle button lifts, smooth transitions
-
-### Importing & Exporting
-
-- **Export Backup** - Click **⬇️** to download a TaskPro backup file
-- **Import Backup** - Click **⬆️** to upload a backup you previously exported
-- Perfect for backup or switching devices
-
-### Keyboard Shortcuts
-
-| Shortcut               | Action                               |
-| ---------------------- | ------------------------------------ |
-| **Cmd/Ctrl + N**       | Create new task                      |
-| **Cmd/Ctrl + K**       | Focus search                         |
-| **Cmd/Ctrl + Z**       | Undo last deletion                   |
-| **?**                  | Show keyboard shortcuts help         |
-| **Esc**                | Close modal / Exit selection mode    |
-
-Press **?** to view all shortcuts in-app.
-
-### Quick Add Syntax
-
-Use the quick add input for rapid task creation:
-
-| Syntax                     | Example                    | Effect          |
-| -------------------------- | -------------------------- | --------------- |
-| `#project`                 | `#work`, `#personal`       | Sets project    |
-| `!priority`                | `!high`, `!medium`, `!low` | Sets priority   |
-| `@tag`                     | `@urgent @backend`         | Adds tags       |
-| `today`                    | `Finish report today`      | Due today       |
-| `tomorrow`                 | `Call client tomorrow`     | Due tomorrow    |
-| `next week`                | `Review docs next week`    | Due in 7 days   |
-| `daily`/`weekly`/`monthly` | `Standup daily`            | Sets recurrence |
-
-**Example:** `Design review tomorrow #work !high @ui @frontend`
-
-### Theme
-
-- Click **🌙** in the sidebar to toggle dark mode
-- Click **Compact** to toggle compact density mode
-- Your preferences are saved automatically
-
-## 🏗️ Architecture
-
-### Tech Stack
-
-- **Frontend**: Vanilla JavaScript (ES modules)
-- **Storage**: IndexedDB via `idb@7` ESM CDN (local persistence)
-- **Styling**: CSS3 (Grid, Flexbox, CSS Variables, modern animations)
-- **Design**: Responsive Mobile-First approach + accessible ARIA
-- **Animations**: Lightweight `canvas-confetti` via CDN (optional)
-- **Compatibility**: No frameworks, no build step required
-
-### Project Structure
-
-```
-├── index.html                 # HTML structure & ARIA-ready modals
+The previous vanilla JS implementation is archived in [docs/legacy-v2.md](docs/legacy-v2.md).
 ├── styles.css                 # Design system, responsive utilities, animations
 ├── src/
 │   ├── main.js                # Entry: init + wiring (no business logic)
