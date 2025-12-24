@@ -1,59 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QuestMaster</title>
+  <meta name="description" content="TaskPro - Professional task management and productivity tool">
+  <title>TaskPro - Task Management</title>
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-  <div class="realm">
-    <header>
-      <h1>QuestMaster</h1>
-      <div class="lord-info">
-        <span id="essence">Essence: 0</span>
-        <div id="progress-bar"><div id="progress-fill"></div></div>
-        <span id="rank">Rank: Outcast</span>
-        <button id="theme-toggle">🌙</button>
-        <button id="voice-btn">🎙️</button>
-        <button id="guild-btn">Guild</button>
+  <div class="app-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <h1>TaskPro</h1>
       </div>
-    </header>
-    <section id="quest-hub">
-      <form id="quest-form">
-        <input type="text" id="quest-input" placeholder="Forge a Quest" required>
-        <input type="date" id="quest-due-date">
-        <select id="quest-priority">
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-        <select id="quest-realm">
-          <option value="Work">Work</option>
-          <option value="Personal">Personal</option>
-          <option value="Fun">Fun</option>
-        </select>
-        <button type="submit">Forge</button>
-      </form>
-      <div id="quest-filters">
-        <button class="filter-rune active" data-filter="All">All</button>
-        <button class="filter-rune" data-filter="Work">Work</button>
-        <button class="filter-rune" data-filter="Personal">Personal</button>
-        <button class="filter-rune" data-filter="Fun">Fun</button>
-        <button class="filter-rune" data-filter="Completed">Completed</button>
+      <nav class="project-nav">
+        <div class="nav-section">
+          <h3>Projects</h3>
+          <button class="project-btn active" data-project="all">
+            <span class="icon">📋</span> All Tasks
+          </button>
+          <button class="project-btn" data-project="work">
+            <span class="icon">💼</span> Work
+          </button>
+          <button class="project-btn" data-project="personal">
+            <span class="icon">👤</span> Personal
+          </button>
+          <button class="project-btn" data-project="learning">
+            <span class="icon">📚</span> Learning
+          </button>
+        </div>
+        <div class="nav-section">
+          <h3>Views</h3>
+          <button class="view-btn" data-view="today">Today</button>
+          <button class="view-btn" data-view="pending">Pending</button>
+          <button class="view-btn" data-view="completed">Completed</button>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <button id="theme-toggle" class="theme-btn" title="Toggle dark mode">🌙</button>
       </div>
-      <ul id="quest-list"></ul>
-      <div id="guild-lodge" style="display: none;">
-        <h3>Guild Lodge</h3>
-        <ul id="guild-scrolls"></ul>
-        <input id="guild-scroll" placeholder="Etch a Scroll">
-        <button id="etch-scroll">Etch</button>
-        <button id="invite-ally">Invite Ally</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="header-left">
+          <h2 id="view-title">All Tasks</h2>
+          <p id="view-subtitle"></p>
+        </div>
+        <div class="header-right">
+          <div class="search-box">
+            <input type="text" id="search-input" placeholder="Search tasks..." aria-label="Search">
+            <span class="search-icon">🔍</span>
+          </div>
+          <div class="header-actions">
+            <button id="analytics-btn" class="btn btn-secondary" title="View analytics">📊</button>
+            <button id="export-btn" class="btn btn-secondary" title="Export tasks">⬇️</button>
+            <button id="import-btn" class="btn btn-secondary" title="Import tasks">⬆️</button>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+          </div>
+          <button id="add-task-btn" class="btn btn-primary">+ New Task</button>
+        </div>
+      </header>
+
+      <!-- Stats Dashboard -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-completed">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-overdue">0</div>
+          <div class="stat-label">Overdue</div>
+        </div>
+      </section>
+
+      <!-- Filter & Sort Bar -->
+      <div class="controls-bar">
+        <div class="sort-controls">
+          <button class="sort-btn active" data-sort="date">Due Date</button>
+          <button class="sort-btn" data-sort="priority">Priority</button>
+          <button class="sort-btn" data-sort="name">Name</button>
+        </div>
       </div>
-    </section>
+
+      <!-- Task List -->
+      <div class="tasks-container">
+        <ul id="task-list" class="task-list" role="list"></ul>
+        <div id="empty-state" class="empty-state">
+          <p>No tasks yet. Create one to get started!</p>
+        </div>
+      </div>
+    </main>
   </div>
+
+  <!-- Add/Edit Task Modal -->
+  <div id="task-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">New Task</h3>
+        <button class="close-btn" id="close-modal">&times;</button>
+      </div>
+      <form id="task-form">
+        <div class="form-group">
+          <label for="task-name">Task Name *</label>
+          <input type="text" id="task-name" required placeholder="Enter task name">
+        </div>
+        <div class="form-group">
+          <label for="task-description">Description</label>
+          <textarea id="task-description" placeholder="Add details (optional)" rows="3"></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="task-priority">Priority</label>
+            <select id="task-priority">
+              <option value="Low">Low</option>
+              <option value="Medium" selected>Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="task-project">Project</label>
+            <select id="task-project">
+              <option value="work">Work</option>
+              <option value="personal" selected>Personal</option>
+              <option value="learning">Learning</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="task-due-date">Due Date</label>
+          <input type="date" id="task-due-date">
+        </div>
+        <div class="form-group">
+          <label for="task-tags">Tags (comma separated)</label>
+          <input type="text" id="task-tags" placeholder="e.g. urgent, backend, design">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Analytics Modal -->
+  <div id="analytics-modal" class="modal" style="display: none;">
+    <div class="modal-content modal-wide">
+      <div class="modal-header">
+        <h3>Analytics & Insights</h3>
+        <button class="close-btn" id="close-analytics">&times;</button>
+      </div>
+      <div class="analytics-content">
+        <div class="analytics-grid">
+          <div class="analytics-card">
+            <h4>Completion Rate</h4>
+            <div class="analytics-value" id="completion-rate">0%</div>
+            <p class="analytics-label">of tasks completed</p>
+          </div>
+          <div class="analytics-card">
+            <h4>Productivity Score</h4>
+            <div class="analytics-value" id="productivity-score">0</div>
+            <p class="analytics-label">out of 100</p>
+          </div>
+          <div class="analytics-card">
+            <h4>Tasks This Week</h4>
+            <div class="analytics-value" id="tasks-week">0</div>
+            <p class="analytics-label">created or completed</p>
+          </div>
+          <div class="analytics-card">
+            <h4>Avg Priority</h4>
+            <div class="analytics-value" id="avg-priority">-</div>
+            <p class="analytics-label">of pending tasks</p>
+          </div>
+        </div>
+        <div class="analytics-details">
+          <div class="analytics-section">
+            <h4>Top Tags</h4>
+            <div id="top-tags" class="tag-list"></div>
+          </div>
+          <div class="analytics-section">
+            <h4>Project Breakdown</h4>
+            <div id="project-breakdown" class="breakdown-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="https://cdn.jsdelivr.net/npm/idb@7.1.1/build/umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script src="script.js"></script>
 </body>
+
 </html>
