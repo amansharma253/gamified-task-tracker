@@ -2,7 +2,7 @@
 
 > A modern, fully-featured task management application built with vanilla JavaScript, IndexedDB, and responsive design. Perfect for individuals and teams who want to stay productive with style.
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Status](https://img.shields.io/badge/status-production--ready-brightgreen.svg)
 
@@ -15,16 +15,41 @@
 - ✅ **Due Dates** - Track task deadlines with automatic overdue detection
 - ✅ **Task Descriptions** - Add detailed notes to any task
 - ✅ **Tags/Labels** - Flexible tagging system for better organization (comma-separated)
+- ✅ **Recurring Tasks** - Set daily, weekly, or monthly recurrence
 
 ### Smart Filtering & Sorting
 - 🔍 **Real-time Search** - Instantly filter tasks by name or description
-- 📊 **Multiple Views** - All Tasks, Today, Pending, Completed
+- 📊 **Multiple Views** - List, Board (Kanban), Calendar, and Analytics
 - 🎯 **Project Filtering** - Filter by Work, Personal, or Learning
-- 📈 **Sort Options** - Sort by Due Date, Priority, or Name
+- 📈 **Sort Options** - Sort by Due Date, Priority, Name, or Manual order
+
+### Inline Quick Editing
+- ✏️ **Double-click Name** - Edit task name inline
+- 🎯 **Click Priority** - Cycle through Low → Medium → High
+- 📅 **Click Due Date** - Edit with inline date picker
+- 🏷️ **Click Tags** - Edit tags inline
+
+### Batch Actions
+- ☑️ **Selection Mode** - Toggle to select multiple tasks
+- ✅ **Select All** - Select all visible tasks (Cmd/Ctrl+A)
+- 🗑️ **Bulk Delete** - Delete selected tasks with undo support
+- ✓ **Bulk Complete** - Mark selected tasks as complete
+
+### Undo Support
+- ↩️ **Undo Deletions** - Restore accidentally deleted tasks
+- ⌨️ **Cmd/Ctrl + Z** - Global undo shortcut
+- 🔔 **Toast Actions** - Click "Undo" in toast notifications
+
+### Gamification
+- 🎮 **XP System** - Earn XP for completing tasks (10 base + priority bonus)
+- 📊 **Leveling** - Level up as you accumulate XP
+- 🔥 **Streaks** - Build daily completion streaks
+- 🏅 **Badges** - Unlock achievements (First Task, 10 Tasks, 50 Tasks, 100 Tasks, High Priority Hunter, Streak Master)
+- 🎯 **Weekly Quests** - Complete high-priority tasks challenge
 
 ### Analytics & Insights
 - 📈 **Completion Rate** - Track your task completion percentage
-- 🎯 **Productivity Score** - AI-calculated score (0-100) based on completion and priority
+- 🎯 **Productivity Score** - Calculated score (0-100) based on completion and priority
 - 📅 **Weekly Activity** - See how many tasks you created/completed this week
 - 🏆 **Priority Analysis** - Understand your workload intensity
 - 🏷️ **Top Tags** - Discover your most-used tags
@@ -32,16 +57,16 @@
 
 ### User Experience
 - 🌓 **Dark Mode** - Built-in dark theme with persistent preference
+- 📐 **Compact Mode** - Dense layout for power users
 - ⌨️ **Keyboard Shortcuts** - Power-user shortcuts for efficiency
-  - **Cmd/Ctrl + K** - Create new task
-  - **Esc** - Close modals
 - 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
 - 💾 **Offline First** - All data stored locally with IndexedDB
 - 🎨 **Modern UI** - Clean, professional design with smooth animations
+- 🎓 **Step-by-Step Onboarding** - Guided tour for new users
 
 ### Data Management
-- 📥 **Import Tasks** - Upload previously exported task files
-- 📤 **Export Tasks** - Download all tasks as JSON for backup or transfer
+- 📥 **Import Backup** - Upload a backup file you previously exported
+- 📤 **Export Backup** - Download a TaskPro backup file (for backup/transfer)
 - 💾 **Auto-save** - All changes are automatically saved
 - 🔒 **Data Privacy** - Your data never leaves your device
 
@@ -116,20 +141,39 @@ That's it! No build step, no dependencies to install.
    - Project distribution
 
 ### Importing & Exporting
-- **Export** - Click **⬇️** to download all tasks as JSON
-- **Import** - Click **⬆️** to upload a previously exported file
+- **Export Backup** - Click **⬇️** to download a TaskPro backup file
+- **Import Backup** - Click **⬆️** to upload a backup you previously exported
 - Perfect for backup or switching devices
 
 ### Keyboard Shortcuts
 | Shortcut | Action |
 |----------|--------|
 | **Cmd/Ctrl + K** | Create new task |
-| **Esc** | Close any modal |
+| **Cmd/Ctrl + Z** | Undo last deletion |
+| **Cmd/Ctrl + A** | Select all tasks (in selection mode) |
+| **?** or **Shift + /** | Open keyboard shortcuts help |
+| **Esc** | Close modal / Exit selection mode |
 | **Tab** | Navigate between fields |
+
+### Quick Add Syntax
+Use the quick add input for rapid task creation:
+
+| Syntax | Example | Effect |
+|--------|---------|--------|
+| `#project` | `#work`, `#personal` | Sets project |
+| `!priority` | `!high`, `!medium`, `!low` | Sets priority |
+| `@tag` | `@urgent @backend` | Adds tags |
+| `today` | `Finish report today` | Due today |
+| `tomorrow` | `Call client tomorrow` | Due tomorrow |
+| `next week` | `Review docs next week` | Due in 7 days |
+| `daily`/`weekly`/`monthly` | `Standup daily` | Sets recurrence |
+
+**Example:** `Design review tomorrow #work !high @ui @frontend`
 
 ### Theme
 - Click **🌙** in the sidebar to toggle dark mode
-- Your theme preference is saved automatically
+- Click **Compact** to toggle compact density mode
+- Your preferences are saved automatically
 
 ## 🏗️ Architecture
 
@@ -142,20 +186,39 @@ That's it! No build step, no dependencies to install.
 
 ### Project Structure
 ```
-├── index.html          # HTML structure
-├── styles.css          # All styling (1000+ lines, modular)
-├── script.js           # JavaScript logic (~500 lines)
-└── README.md           # This file
+├── index.html                 # HTML structure & ARIA-ready modals
+├── styles.css                 # Styling, responsive + accessibility helpers
+├── src/
+│   ├── main.js                # Entry point wiring UI + state + event handlers
+│   ├── data/
+│   │   └── storage.js         # IndexedDB persistence (tasks, prefs, gamification)
+│   ├── models/
+│   │   ├── task.js            # Task creation, parsing, recurrence helpers
+│   │   └── gamification.js    # XP, streaks, badges, weekly quests
+│   ├── ui/
+│   │   ├── renderers.js       # List/board/calendar rendering + analytics
+│   │   ├── state.js           # Central state + filters + undo stack
+│   │   └── onboarding.js      # Step-by-step first-time guidance
+│   └── utils/
+│       ├── dates.js           # Date formatting and utilities
+│       ├── dom.js             # DOM query helpers
+│       └── toast.js           # Toast notification system with actions
+└── README.md                  # This file
 ```
 
 ### Key Features of the Code
-- ✅ **Clean Architecture** - Separation of concerns (HTML/CSS/JS)
-- ✅ **Async Operations** - Proper async/await for database operations
-- ✅ **Error Handling** - Try-catch blocks on all critical operations
-- ✅ **XSS Prevention** - HTML escaping for user input
-- ✅ **Accessibility** - Semantic HTML, ARIA labels, keyboard navigation
-- ✅ **Performance** - Debounced search, efficient DOM updates
-- ✅ **Responsive Design** - Mobile-first with breakpoints at 768px and 480px
+- ✅ **Modular Architecture** - ES modules for data, models, UI, and utilities
+- ✅ **Async Persistence** - IndexedDB via idb ESM with defensive error handling
+- ✅ **Gamification Core** - XP/leveling, streaks, badges, weekly high-priority quest
+- ✅ **Inline Editing** - Double-click name, click priority/due/tags for quick edits
+- ✅ **Undo Support** - Undo stack for task deletions with toast actions
+- ✅ **Batch Actions** - Selection mode with bulk complete/delete
+- ✅ **Toast Notifications** - Success/error/info feedback with action buttons
+- ✅ **Step-by-Step Onboarding** - Guided tooltips for first-time users
+- ✅ **Smart Form Defaults** - Quick date buttons, last project memory, auto-capitalize
+- ✅ **Inline Validation** - Task modal keeps focus, prevents close on errors
+- ✅ **Accessibility** - ARIA-labelled modals/buttons, keyboard shortcuts, focus management
+- ✅ **Responsive Design** - Mobile-first with improved tap targets and compact density mode
 
 ## 📊 Data Model
 
@@ -167,10 +230,29 @@ Each task object contains:
   description: string,     // Detailed notes (optional)
   priority: string,        // 'Low' | 'Medium' | 'High'
   project: string,         // 'work' | 'personal' | 'learning'
+  status: string,          // 'todo' | 'in_progress' | 'done'
   dueDate: string,         // ISO date format (YYYY-MM-DD)
-  tags: array,            // Array of tag strings
+  recurrence: string,      // 'none' | 'daily' | 'weekly' | 'monthly'
+  tags: array,             // Array of tag strings
   completed: boolean,      // Completion status
-  createdAt: string       // ISO datetime of creation
+  order: number,           // Manual ordering value
+  createdAt: string        // ISO datetime of creation
+}
+```
+
+Gamification state:
+```javascript
+{
+  xp: number,              // Total experience points
+  level: number,           // Current level (100 XP per level)
+  streak: number,          // Current daily streak
+  lastCompletionDate: string, // Last task completion date
+  badges: array,           // Unlocked badge IDs
+  weeklyChallenge: {       // Weekly quest
+    target: number,        // High-priority tasks to complete
+    progress: number,      // Current progress
+    weekStart: string      // Week start date
+  }
 }
 ```
 
@@ -243,15 +325,20 @@ This project is open source and available under the MIT License. See LICENSE fil
 
 ## 🎯 Roadmap
 
-### Planned Features
-- [ ] Recurring tasks (Daily, Weekly, Monthly)
-- [ ] Task time estimates and tracking
-- [ ] Collaboration features
-- [ ] Mobile app (React Native)
-- [ ] Cloud sync option
-- [ ] Advanced reporting
-- [ ] Calendar view
-- [ ] Drag & drop reordering
+### Short-term (1-4 weeks)
+- Polish UX (board interactions, keyboard navigation) and microcopy
+- Tune XP rewards, streak edge cases, and badge notifications
+- Improve onboarding hints and contextual tooltips
+
+### Medium-term (1-3 months)
+- Add optional auth + cloud sync (multi-device continuity)
+- Encrypted backups and team spaces with shared projects
+- Calendar heatmap and richer analytics exports
+
+### Long-term (3-9 months)
+- Social features: leaderboards, peer challenges, shared quests
+- AI task suggestions and smart prioritization
+- Mobile companion apps and offline-first sync queues
 
 ## 🐛 Known Issues
 
