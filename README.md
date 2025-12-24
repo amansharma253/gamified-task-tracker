@@ -1,14 +1,31 @@
-# TaskPro - Professional Task Management Application
+# TaskPro
 
-> A modern, fully-featured task management application built with vanilla JavaScript, IndexedDB, and responsive design. Perfect for individuals and teams who want to stay productive with style.
+> A premium, gamified task tracker rebuilt as a modern React + TypeScript app.
 
-![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)
+![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Status](https://img.shields.io/badge/status-production--ready-brightgreen.svg)
+![Status](https://img.shields.io/badge/status-active--rebuild-brightgreen.svg)
+
+## Stack
+
+- React + Vite + TypeScript
+- Tailwind CSS + shadcn/ui
+- Redux Toolkit (state)
+- Dexie (IndexedDB persistence)
+- date-fns + zod (dates + validation)
+
+## Current scope (v3)
+
+- Tasks: create/edit/delete, search, status filters
+- Gamification: XP, levels, streaks, badges, weekly challenge
+- Local-first persistence (no backend)
+
+> Note: The rest of this README contains legacy v2 (vanilla JS) documentation kept for archive; it does not reflect the current v3 app.
 
 ## ✨ Features
 
 ### Core Functionality
+
 - ✅ **Create, Read, Update, Delete Tasks** - Full CRUD operations with instant persistence
 - ✅ **Task Organization** - Organize tasks by projects (Work, Personal, Learning)
 - ✅ **Priority Levels** - Set High/Medium/Low priority for each task
@@ -16,31 +33,37 @@
 - ✅ **Task Descriptions** - Add detailed notes to any task
 - ✅ **Tags/Labels** - Flexible tagging system for better organization (comma-separated)
 - ✅ **Recurring Tasks** - Set daily, weekly, or monthly recurrence
+- ✅ **PWA Support** - Install as app, works offline with service worker
 
 ### Smart Filtering & Sorting
+
 - 🔍 **Real-time Search** - Instantly filter tasks by name or description
 - 📊 **Multiple Views** - List, Board (Kanban), Calendar, and Analytics
 - 🎯 **Project Filtering** - Filter by Work, Personal, or Learning
 - 📈 **Sort Options** - Sort by Due Date, Priority, Name, or Manual order
 
 ### Inline Quick Editing
+
 - ✏️ **Double-click Name** - Edit task name inline
 - 🎯 **Click Priority** - Cycle through Low → Medium → High
 - 📅 **Click Due Date** - Edit with inline date picker
 - 🏷️ **Click Tags** - Edit tags inline
 
 ### Batch Actions
+
 - ☑️ **Selection Mode** - Toggle to select multiple tasks
 - ✅ **Select All** - Select all visible tasks (Cmd/Ctrl+A)
 - 🗑️ **Bulk Delete** - Delete selected tasks with undo support
 - ✓ **Bulk Complete** - Mark selected tasks as complete
 
 ### Undo Support
+
 - ↩️ **Undo Deletions** - Restore accidentally deleted tasks
 - ⌨️ **Cmd/Ctrl + Z** - Global undo shortcut
 - 🔔 **Toast Actions** - Click "Undo" in toast notifications
 
 ### Gamification
+
 - 🎮 **XP System** - Earn XP for completing tasks (10 base + priority bonus)
 - 📊 **Leveling** - Level up as you accumulate XP
 - 🔥 **Streaks** - Build daily completion streaks
@@ -48,6 +71,7 @@
 - 🎯 **Weekly Quests** - Complete high-priority tasks challenge
 
 ### Analytics & Insights
+
 - 📈 **Completion Rate** - Track your task completion percentage
 - 🎯 **Productivity Score** - Calculated score (0-100) based on completion and priority
 - 📅 **Weekly Activity** - See how many tasks you created/completed this week
@@ -56,7 +80,8 @@
 - 📊 **Project Breakdown** - Visualize task distribution across projects
 
 ### User Experience
-- 🌓 **Dark Mode** - Built-in dark theme with persistent preference
+
+- 🌑 **Premium Dark UI** - Dark theme by default (single theme)
 - 📐 **Compact Mode** - Dense layout for power users
 - ⌨️ **Keyboard Shortcuts** - Power-user shortcuts for efficiency
 - 📱 **Fully Responsive** - Works seamlessly on desktop, tablet, and mobile
@@ -65,6 +90,7 @@
 - 🎓 **Step-by-Step Onboarding** - Guided tour for new users
 
 ### Data Management
+
 - 📥 **Import Backup** - Upload a backup file you previously exported
 - 📤 **Export Backup** - Download a TaskPro backup file (for backup/transfer)
 - 💾 **Auto-save** - All changes are automatically saved
@@ -73,25 +99,32 @@
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- No installation required - works entirely in the browser!
 
-### Running Locally
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Node.js 18+ (for building production version)
+- No installation required for development!
+
+### Running Locally (Development)
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/amansharma253/gamified-task-tracker.git
    cd gamified-task-tracker
    ```
 
 2. **Start a local server**
+
    ```bash
    # Using Python 3
    python3 -m http.server 8000
-   
-   # Or using Node.js (if installed)
+
+   # Or using npm
+   npm run dev
+
+   # Or using Node.js
    npx http-server
-   
+
    # Or using PHP
    php -S localhost:8000
    ```
@@ -101,12 +134,32 @@
    http://localhost:8000
    ```
 
-That's it! No build step, no dependencies to install.
+### Building for Production
+
+```bash
+# Install dependencies
+npm install
+
+# Build optimized bundle
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+**Build output:**
+- Minified JavaScript bundle (~60-70% smaller)
+- Minified CSS
+- Optimized for deployment
+- Service worker for offline support
+
+That's it! No complex build configuration needed.
 
 ## 💡 Usage Guide
 
 ### Creating a Task
-1. Click **"+ New Task"** button or press **Cmd/Ctrl + K**
+
+1. Click **"+ New Task"** button or press **Cmd/Ctrl + N**
 2. Fill in the task details:
    - **Task Name** (required)
    - **Description** (optional)
@@ -117,6 +170,7 @@ That's it! No build step, no dependencies to install.
 3. Click **"Save Task"**
 
 ### Managing Tasks
+
 - **Mark Complete** - Click the checkbox next to a task
 - **Edit** - Click the ✏️ icon
 - **Delete** - Click the 🗑️ icon
@@ -124,6 +178,7 @@ That's it! No build step, no dependencies to install.
 - **Filter** - Select a project or view from the sidebar
 
 ### Sorting & Filtering
+
 - **Sort by Due Date** - See what's coming up
 - **Sort by Priority** - Focus on important work
 - **Sort by Name** - Alphabetical organization
@@ -131,6 +186,7 @@ That's it! No build step, no dependencies to install.
 - **Filter by Project** - Stay focused on one area
 
 ### Analytics
+
 1. Click the **📊 Analytics** button in the header
 2. View your:
    - Completion rate percentage
@@ -139,38 +195,51 @@ That's it! No build step, no dependencies to install.
    - Priority analysis
    - Top used tags
    - Project distribution
+   - Gamification stats (XP, level, streaks, badges)
+
+### Visual Feedback
+
+- **XP Bubbles** - Animated XP gain appears when completing tasks
+- **Level-Up Confetti** - Optional celebration when reaching a new level
+- **Toast Notifications** - Smooth slide-in messages for actions (with undo support)
+- **Micro-interactions** - Subtle button lifts, smooth transitions
 
 ### Importing & Exporting
+
 - **Export Backup** - Click **⬇️** to download a TaskPro backup file
 - **Import Backup** - Click **⬆️** to upload a backup you previously exported
 - Perfect for backup or switching devices
 
 ### Keyboard Shortcuts
-| Shortcut | Action |
-|----------|--------|
-| **Cmd/Ctrl + K** | Create new task |
-| **Cmd/Ctrl + Z** | Undo last deletion |
-| **Cmd/Ctrl + A** | Select all tasks (in selection mode) |
-| **?** or **Shift + /** | Open keyboard shortcuts help |
-| **Esc** | Close modal / Exit selection mode |
-| **Tab** | Navigate between fields |
+
+| Shortcut               | Action                               |
+| ---------------------- | ------------------------------------ |
+| **Cmd/Ctrl + N**       | Create new task                      |
+| **Cmd/Ctrl + K**       | Focus search                         |
+| **Cmd/Ctrl + Z**       | Undo last deletion                   |
+| **?**                  | Show keyboard shortcuts help         |
+| **Esc**                | Close modal / Exit selection mode    |
+
+Press **?** to view all shortcuts in-app.
 
 ### Quick Add Syntax
+
 Use the quick add input for rapid task creation:
 
-| Syntax | Example | Effect |
-|--------|---------|--------|
-| `#project` | `#work`, `#personal` | Sets project |
-| `!priority` | `!high`, `!medium`, `!low` | Sets priority |
-| `@tag` | `@urgent @backend` | Adds tags |
-| `today` | `Finish report today` | Due today |
-| `tomorrow` | `Call client tomorrow` | Due tomorrow |
-| `next week` | `Review docs next week` | Due in 7 days |
-| `daily`/`weekly`/`monthly` | `Standup daily` | Sets recurrence |
+| Syntax                     | Example                    | Effect          |
+| -------------------------- | -------------------------- | --------------- |
+| `#project`                 | `#work`, `#personal`       | Sets project    |
+| `!priority`                | `!high`, `!medium`, `!low` | Sets priority   |
+| `@tag`                     | `@urgent @backend`         | Adds tags       |
+| `today`                    | `Finish report today`      | Due today       |
+| `tomorrow`                 | `Call client tomorrow`     | Due tomorrow    |
+| `next week`                | `Review docs next week`    | Due in 7 days   |
+| `daily`/`weekly`/`monthly` | `Standup daily`            | Sets recurrence |
 
 **Example:** `Design review tomorrow #work !high @ui @frontend`
 
 ### Theme
+
 - Click **🌙** in the sidebar to toggle dark mode
 - Click **Compact** to toggle compact density mode
 - Your preferences are saved automatically
@@ -178,51 +247,84 @@ Use the quick add input for rapid task creation:
 ## 🏗️ Architecture
 
 ### Tech Stack
-- **Frontend**: Vanilla JavaScript (ES6+)
-- **Storage**: IndexedDB (local persistence)
-- **Styling**: CSS3 (Grid, Flexbox, CSS Variables)
-- **Design**: Responsive Mobile-First approach
-- **Compatibility**: Works without any frameworks or libraries
+
+- **Frontend**: Vanilla JavaScript (ES modules)
+- **Storage**: IndexedDB via `idb@7` ESM CDN (local persistence)
+- **Styling**: CSS3 (Grid, Flexbox, CSS Variables, modern animations)
+- **Design**: Responsive Mobile-First approach + accessible ARIA
+- **Animations**: Lightweight `canvas-confetti` via CDN (optional)
+- **Compatibility**: No frameworks, no build step required
 
 ### Project Structure
+
 ```
 ├── index.html                 # HTML structure & ARIA-ready modals
-├── styles.css                 # Styling, responsive + accessibility helpers
+├── styles.css                 # Design system, responsive utilities, animations
 ├── src/
-│   ├── main.js                # Entry point wiring UI + state + event handlers
+│   ├── main.js                # Entry: init + wiring (no business logic)
 │   ├── data/
-│   │   └── storage.js         # IndexedDB persistence (tasks, prefs, gamification)
+│   │   └── storage.js         # IndexedDB persistence + schema meta + sanitizers
 │   ├── models/
 │   │   ├── task.js            # Task creation, parsing, recurrence helpers
-│   │   └── gamification.js    # XP, streaks, badges, weekly quests
+│   │   └── gamification.js    # XP rules, levels, streaks, badges (testable)
 │   ├── ui/
-│   │   ├── renderers.js       # List/board/calendar rendering + analytics
-│   │   ├── state.js           # Central state + filters + undo stack
-│   │   └── onboarding.js      # Step-by-step first-time guidance
+│   │   ├── state/
+│   │   │   ├── store.js       # Pure state container
+│   │   │   ├── actions.js     # Mutations (no DOM/storage)
+│   │   │   └── selectors.js   # Derived data helpers (filtering/sorting)
+│   │   ├── state.js           # Shim re-export (backward compatible)
+│   │   ├── renderers.js       # DOM rendering for list/board/calendar/analytics
+│   │   ├── animations.js      # XP bubbles + level-up confetti
+│   │   └── onboarding.js      # First-time guided tooltips (focus-trapped)
 │   └── utils/
-│       ├── dates.js           # Date formatting and utilities
-│       ├── dom.js             # DOM query helpers
-│       └── toast.js           # Toast notification system with actions
+│       ├── dates.js           # Date normalization utilities
+│       ├── dom.js             # DOM helpers + focus trap
+│       ├── toast.js           # Toast notification system with actions
+│       ├── debounce.js        # Performance utility for search
+│       ├── loading.js         # Loading state management
+│       └── shortcuts.js       # Keyboard shortcuts system
 └── README.md                  # This file
 ```
 
-### Key Features of the Code
-- ✅ **Modular Architecture** - ES modules for data, models, UI, and utilities
-- ✅ **Async Persistence** - IndexedDB via idb ESM with defensive error handling
-- ✅ **Gamification Core** - XP/leveling, streaks, badges, weekly high-priority quest
-- ✅ **Inline Editing** - Double-click name, click priority/due/tags for quick edits
-- ✅ **Undo Support** - Undo stack for task deletions with toast actions
-- ✅ **Batch Actions** - Selection mode with bulk complete/delete
-- ✅ **Toast Notifications** - Success/error/info feedback with action buttons
-- ✅ **Step-by-Step Onboarding** - Guided tooltips for first-time users
-- ✅ **Smart Form Defaults** - Quick date buttons, last project memory, auto-capitalize
-- ✅ **Inline Validation** - Task modal keeps focus, prevents close on errors
-- ✅ **Accessibility** - ARIA-labelled modals/buttons, keyboard shortcuts, focus management
-- ✅ **Responsive Design** - Mobile-first with improved tap targets and compact density mode
+### Key Engineering Choices
+
+- ✅ **Strict ES Modules** across all files (tree-shakeable)
+- ✅ **State split** (store/actions/selectors) for clarity and testability
+- ✅ **Async persistence** with schema versioning + sanitizers
+- ✅ **Gamification hardening** (explicit XP constants, normalized dates, guards)
+- ✅ **Inline editing & undo** with non-blocking toasts
+- ✅ **Batch actions** (selection mode) without side effects in state layer
+- ✅ **Accessibility** (ARIA labels, focus trap, keyboard navigation)
+- ✅ **Performance** (debounced search, loading indicators, efficient re-renders)
+- ✅ **Visual polish** (SVG icons, micro-interactions, XP animations)
+- ✅ **Unit tests** for selectors and gamification rules (Node.js test runner)
+- ✅ **Responsive design** including compact density and collapsed sidebar
+- ✅ **PWA ready** with manifest, service worker, and offline support
+- ✅ **Production builds** with esbuild for ~70% size reduction
+- ✅ **CSS Layers** for organized cascade control
+
+### Animation System
+
+**XP Gain Visualization:**
+- Floating bubble with `+XP` appears at task element
+- Lightweight CSS animation (`@keyframes xpFloat`)
+- Auto-removes after animation completes
+
+**Level-Up Celebration:**
+- Optional confetti burst via `canvas-confetti` CDN
+- Lazy-loaded on first level-up (performance)
+- Can be disabled by commenting out import
+
+**Performance Considerations:**
+- CSS animations use `transform` and `opacity` (GPU-accelerated)
+- `will-change` hint for smooth button interactions
+- Debounced search (250ms) reduces re-renders
+- Loading overlay prevents UI jank during async operations
 
 ## 📊 Data Model
 
 Each task object contains:
+
 ```javascript
 {
   id: number,              // Unique timestamp-based ID
@@ -241,31 +343,68 @@ Each task object contains:
 ```
 
 Gamification state:
+
 ```javascript
 {
   xp: number,              // Total experience points
-  level: number,           // Current level (100 XP per level)
+   level: number,           // Current level (explicit XP_PER_LEVEL)
   streak: number,          // Current daily streak
   lastCompletionDate: string, // Last task completion date
   badges: array,           // Unlocked badge IDs
   weeklyChallenge: {       // Weekly quest
-    target: number,        // High-priority tasks to complete
+   target: number,        // High-priority tasks to complete (capped)
     progress: number,      // Current progress
     weekStart: string      // Week start date
   }
-}
+   }
 ```
+
+## 🛠️ Testing
+
+### Run Unit Tests
+
+```bash
+# Test selectors
+node --test src/ui/state/selectors.test.js
+
+# Test gamification
+node --test src/models/gamification.test.js
+
+# Run all tests
+node --test src/**/*.test.js
+```
+
+Tests cover:
+- Filtering logic (project, view, search)
+- Sorting algorithms (priority, date, name, manual)
+- XP calculation and level-up thresholds
+- Streak mechanics and badge unlocking
+- Weekly challenge progression
+
+## 🧭 Why Vanilla JS
+
+- Demonstrates mastery of core web platform without framework overhead
+- Easier to reason about for small teams and educational purposes
+- Showcases clean module boundaries and accessibility considerations
+- No build step = instant development feedback
+- Smaller bundle size and faster load times
+- ✅ **Completed:** State architecture split, gamification animations, unit tests, PWA support, production builds
+- 🔄 **In Progress:** Enhanced analytics with trend visualization
+- 📋 **Planned:** Cloud sync with encryption (optional)
+- ✅ **Completed:** State architecture split, gamification animations, unit tests
+- 🔄 **In Progress:** Enhanced analytics with trend visualization
+- 📋 **Planned:** Cloud sync with encryption (optional), mobile PWA with offline support
 
 ## 🎨 Color Palette
 
-| Element | Light Mode | Dark Mode |
-|---------|-----------|-----------|
-| Primary | #2563eb | #3b82f6 |
-| Success | #10b981 | #10b981 |
-| Warning | #f59e0b | #fbbf24 |
-| Danger | #ef4444 | #f87171 |
-| Background | #f8fafc | #0f172a |
-| Text | #0f172a | #f1f5f9 |
+| Element    | Light Mode | Dark Mode |
+| ---------- | ---------- | --------- |
+| Primary    | #2563eb    | #3b82f6   |
+| Success    | #10b981    | #10b981   |
+| Warning    | #f59e0b    | #fbbf24   |
+| Danger     | #ef4444    | #f87171   |
+| Background | #f8fafc    | #0f172a   |
+| Text       | #0f172a    | #f1f5f9   |
 
 ## 🔐 Privacy & Security
 
@@ -277,37 +416,68 @@ Gamification state:
 
 ## 📈 Performance
 
-- **First Load** - ~100ms
+- **First Load** - ~50KB (minified bundle)
 - **Average Task Operation** - <5ms
-- **Search Speed** - Real-time (<1ms)
+- **Search Speed** - Real-time (<1ms with debounce)
 - **Memory Usage** - ~2MB for 1000 tasks
-- **Browser Support** - All modern browsers (ES6+)
+- **Offline Support** - Full functionality via service worker
+- **Browser Support** - All modern browsers (ES2020+)
 
 ## 🚢 Deployment
 
+### Prerequisites
+
+- No build step required
+- Works with any static file host
+- HTTPS recommended for service workers (future PWA)
+
 ### Deploy to Netlify (Recommended)
+
 1. Push to GitHub
-2. Connect to Netlify
+2. Connect repository to Netlify
 3. Build command: `(leave empty)`
 4. Publish directory: `.` or `/`
+5. Deploy with one click
+
+**Advanced:** Add `netlify.toml` for redirects:
+```toml
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+```
 
 ### Deploy to GitHub Pages
+
 ```bash
 # Push your code to GitHub
 git push origin main
 
 # Enable GitHub Pages in repository settings
 # Choose 'main' branch as source
+# Access at: https://yourusername.github.io/gamified-task-tracker
 ```
 
 ### Deploy to Vercel
-1. Import project from GitHub
-2. No build step needed
-3. Deploy with one click
 
-## 🤝 Contributing
+1. Import project from GitHub
+2. Framework preset: Other
+3. No build command needed
+4. Deploy with one click
+
+### Deploy to Any Static Host
+
+Simply upload all files to your web hosting. Requirements:
+- Serve `index.html` as default
+- Enable HTTPS (recommended)
+- Set correct MIME types for `.js` files (`application/javascript`)
+
+## 🐛 Known Issues
+
+None currently! If you find any, please open an issue.
 
 Contributions are welcome! Feel free to:
+
 - Report bugs
 - Suggest new features
 - Submit pull requests
@@ -320,22 +490,26 @@ This project is open source and available under the MIT License. See LICENSE fil
 ## 👨‍💻 Author
 
 **Aman Sharma**
+
 - GitHub: [@amansharma253](https://github.com/amansharma253)
 - Portfolio: [Your Portfolio](https://yourportfolio.com)
 
 ## 🎯 Roadmap
 
 ### Short-term (1-4 weeks)
+
 - Polish UX (board interactions, keyboard navigation) and microcopy
 - Tune XP rewards, streak edge cases, and badge notifications
 - Improve onboarding hints and contextual tooltips
 
 ### Medium-term (1-3 months)
+
 - Add optional auth + cloud sync (multi-device continuity)
 - Encrypted backups and team spaces with shared projects
 - Calendar heatmap and richer analytics exports
 
 ### Long-term (3-9 months)
+
 - Social features: leaderboards, peer challenges, shared quests
 - AI task suggestions and smart prioritization
 - Mobile companion apps and offline-first sync queues
@@ -344,9 +518,12 @@ This project is open source and available under the MIT License. See LICENSE fil
 
 None currently! If you find any, please open an issue.
 
-## 📞 Support
+## 🤝 Contributing
 
-Have questions or need help? 
+Contributions are welcome! Feel free to:
+
+Have questions or need help?
+
 - Open an issue on GitHub
 - Check the Usage Guide above
 - Review the code comments
