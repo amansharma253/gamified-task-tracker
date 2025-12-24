@@ -177,6 +177,20 @@ body {
   align-items: center;
 }
 
+.quick-add {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.quick-add input {
+  width: 320px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: var(--bg-secondary);
+}
+
 .header-actions {
   display: flex;
   gap: 8px;
@@ -341,6 +355,23 @@ body {
   transition: all 0.2s ease;
 }
 
+.task-item[draggable="true"] {
+  cursor: grab;
+}
+
+.drag-handle {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--border),
+    var(--border) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+}
+
 .task-item:hover {
   border-color: var(--primary);
   box-shadow: var(--shadow-md);
@@ -475,6 +506,96 @@ body {
   height: 300px;
   color: var(--text-muted);
   font-size: 16px;
+}
+
+/* Board View */
+.board-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.board-column {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.board-column h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.board-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 120px;
+}
+
+.draggable {
+  cursor: grab;
+}
+
+.drop-target {
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+/* Calendar View */
+.calendar-container {
+  background-color: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  min-height: 90px;
+  padding: 6px;
+}
+
+.calendar-day .day-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.calendar-task {
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: 6px;
+  padding: 4px 6px;
+  font-size: 12px;
+  margin-bottom: 4px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .board-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Modal */
@@ -766,6 +887,21 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
+}
+
+/* Density Toggle: Compact mode */
+body.compact .task-item {
+  padding: 10px;
+}
+body.compact .stat-card {
+  padding: 14px;
+}
+body.compact .controls-bar {
+  padding: 10px 14px;
+}
+body.compact .search-box input,
+body.compact .quick-add input {
+  padding: 8px 10px;
 }
 
 .analytics-card {

@@ -23,6 +23,8 @@ let currentSort = 'date';
 let searchQuery = '';
 let isDarkMode = false;
 let editingId = null;
+let calendarMonthOffset = 0;
+const WIP_LIMIT_IN_PROGRESS = 5;
 
 // DOM Elements
 const taskForm = document.getElementById('task-form');
@@ -31,7 +33,11 @@ const taskDescription = document.getElementById('task-description');
 const taskPriority = document.getElementById('task-priority');
 const taskProject = document.getElementById('task-project');
 const taskDueDate = document.getElementById('task-due-date');
+const taskStatus = document.getElementById('task-status');
+const taskRecurrence = document.getElementById('task-recurrence');
 const taskList = document.getElementById('task-list');
+const boardContainer = document.getElementById('board-container');
+const calendarContainer = document.getElementById('calendar-container');
 const searchInput = document.getElementById('search-input');
 const addTaskBtn = document.getElementById('add-task-btn');
 const taskModal = document.getElementById('task-modal');
@@ -54,6 +60,9 @@ const importBtn = document.getElementById('import-btn');
 const importFile = document.getElementById('import-file');
 const analyticsModal = document.getElementById('analytics-modal');
 const closeAnalyticsBtn = document.getElementById('close-analytics');
+const quickAddInput = document.getElementById('quick-add-input');
+const quickAddBtn = document.getElementById('quick-add-btn');
+const densityToggle = document.getElementById('density-toggle');
 
 // Persistence
 async function saveData() {
@@ -121,6 +130,10 @@ function getFilteredTasks() {
       return priorityOrder[a.priority] - priorityOrder[b.priority];
     } else if (currentSort === 'name') {
       return a.name.localeCompare(b.name);
+    } else if (currentSort === 'manual') {
+      const ao = a.order ?? 0;
+      const bo = b.order ?? 0;
+      return ao - bo;
     }
     return 0;
   });
@@ -148,6 +161,22 @@ function renderStats() {
 }
 
 function renderTasks() {
+  // Toggle containers based on view
+  taskList.style.display = (currentView === 'board' || currentView === 'calendar') ? 'none' : '';
+  boardContainer.style.display = currentView === 'board' ? '' : 'none';
+  calendarContainer.style.display = currentView === 'calendar' ? '' : 'none';
+
+  if (currentView === 'board') {
+    renderBoard();
+    renderStats();
+    return;
+  }
+  if (currentView === 'calendar') {
+    renderCalendar();
+    renderStats();
+    return;
+  }
+
   taskList.innerHTML = '';
   const filtered = getFilteredTasks();
 
@@ -160,7 +189,8 @@ function renderTasks() {
 
   filtered.forEach(task => {
     const isOverdue = task.dueDate && task.dueDate < new Date().toISOString().split('T')[0] && !task.completed;
-    
+    const status = task.status || (task.completed ? 'done' : 'todo');
+
     const li = document.createElement('li');
     li.className = `task-item ${task.completed ? 'completed' : ''}`;
     const tagsHtml = task.tags && task.tags.length > 0 
@@ -174,18 +204,27 @@ function renderTasks() {
         <div class="task-meta">
           <span class="task-priority priority-${task.priority.toLowerCase()}">${task.priority}</span>
           <span class="task-project">${task.project}</span>
+          <span class="task-status">${status.replace('_',' ')}</span>
           ${task.dueDate ? `<span class="task-due ${isOverdue ? 'overdue' : ''}">📅 ${formatDate(task.dueDate)}</span>` : ''}
         </div>
         ${tagsHtml}
       </div>
       <div class="task-actions">
+        ${currentSort === 'manual' ? '<span class="drag-handle" title="Drag to reorder"></span>' : ''}
         <button class="task-btn task-btn-edit" data-id="${task.id}" title="Edit">✏️</button>
         <button class="task-btn task-btn-delete" data-id="${task.id}" title="Delete">🗑️</button>
       </div>
     `;
+    if (currentSort === 'manual') {
+      li.setAttribute('draggable', 'true');
+      li.dataset.id = String(task.id);
+    }
     taskList.appendChild(li);
   });
 
+  if (currentSort === 'manual') {
+    enableManualReorder();
+  }
   renderStats();
 }
 
@@ -194,7 +233,9 @@ function updateViewTitle() {
     all: 'All Tasks',
     today: 'Today',
     pending: 'Pending Tasks',
-    completed: 'Completed Tasks'
+    completed: 'Completed Tasks',
+    board: 'Board',
+    calendar: 'Calendar'
   };
   viewTitle.textContent = titles[currentView] || 'All Tasks';
   viewSubtitle.textContent = '';
@@ -254,6 +295,9 @@ taskForm.addEventListener('submit', async (e) => {
       task.priority = taskPriority.value;
       task.project = taskProject.value;
       task.dueDate = taskDueDate.value || null;
+      task.status = taskStatus.value;
+      task.completed = task.status === 'done' ? true : task.completed;
+      task.recurrence = taskRecurrence.value;
       task.tags = taskTags.value.split(',').map(t => t.trim()).filter(t => t);
     }
   } else {
@@ -264,10 +308,14 @@ taskForm.addEventListener('submit', async (e) => {
       priority: taskPriority.value,
       project: taskProject.value,
       dueDate: taskDueDate.value || null,
+      status: taskStatus ? taskStatus.value : 'todo',
+      recurrence: taskRecurrence ? taskRecurrence.value : 'none',
       tags: taskTags.value.split(',').map(t => t.trim()).filter(t => t),
       completed: false,
-      createdAt: new Date().toISOString()
+      createdAt: new Date().toISOString(),
+      order: nextOrderValue()
     };
+    if (newTask.status === 'done') newTask.completed = true;
     tasks.push(newTask);
   }
 
@@ -283,6 +331,26 @@ taskList.addEventListener('change', async (e) => {
     const task = tasks.find(t => t.id === id);
     if (task) {
       task.completed = e.target.checked;
+      task.status = task.completed ? 'done' : (task.status === 'done' ? 'todo' : (task.status || 'todo'));
+      // Handle recurrence: create next occurrence when completed
+      if (task.completed && task.recurrence && task.recurrence !== 'none' && task.dueDate) {
+        const nextDate = nextRecurrenceDate(task.dueDate, task.recurrence);
+        if (nextDate) {
+          tasks.push({
+            id: Date.now() + Math.floor(Math.random()*1000),
+            name: task.name,
+            description: task.description,
+            priority: task.priority,
+            project: task.project,
+            dueDate: nextDate,
+            status: 'todo',
+            recurrence: task.recurrence,
+            tags: task.tags || [],
+            completed: false,
+            createdAt: new Date().toISOString()
+          });
+        }
+      }
       await saveData();
       renderTasks();
     }
@@ -510,3 +578,361 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('Error initializing app:', error);
   }
 });
+
+// Quick Add
+quickAddBtn.addEventListener('click', async () => {
+  const text = quickAddInput.value.trim();
+  if (!text) return;
+  const parsed = parseQuickAdd(text);
+  tasks.push({
+    id: Date.now(),
+    name: parsed.name,
+    description: parsed.description,
+    priority: parsed.priority,
+    project: parsed.project,
+    dueDate: parsed.dueDate,
+    status: parsed.status,
+    recurrence: parsed.recurrence,
+    tags: parsed.tags,
+    completed: parsed.status === 'done',
+    createdAt: new Date().toISOString(),
+    order: nextOrderValue()
+  });
+  await saveData();
+  quickAddInput.value = '';
+  renderTasks();
+});
+
+quickAddInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    quickAddBtn.click();
+  }
+});
+
+function parseQuickAdd(text) {
+  // Tokens: #project, !priority, @tag, keywords: today, tomorrow, next week; status: ~done/~progress
+  const parts = text.split(/\s+/);
+  let nameParts = [];
+  let project = 'personal';
+  let priority = 'Medium';
+  let tags = [];
+  let status = 'todo';
+  let recurrence = 'none';
+  let dueDate = null;
+  parts.forEach(p => {
+    if (p.startsWith('#')) {
+      const val = p.slice(1).toLowerCase();
+      if (['work','personal','learning'].includes(val)) project = val;
+      else tags.push(val);
+    } else if (p.startsWith('!')) {
+      const val = p.slice(1).toLowerCase();
+      if (val === 'high') priority = 'High';
+      else if (val === 'low') priority = 'Low';
+      else priority = 'Medium';
+    } else if (p.startsWith('@')) {
+      tags.push(p.slice(1));
+    } else if (p.startsWith('~')) {
+      const val = p.slice(1);
+      if (val === 'done') status = 'done';
+      else if (val === 'progress') status = 'in_progress';
+    } else if (/^\d{4}-\d{2}-\d{2}$/.test(p)) {
+      dueDate = p;
+    } else if (/^tomorrow$/i.test(p)) {
+      const d = new Date(); d.setDate(d.getDate()+1);
+      dueDate = toISODate(d);
+    } else if (/^today$/i.test(p)) {
+      dueDate = toISODate(new Date());
+    } else if (/^next\s*week$/i.test(p)) {
+      const d = new Date(); d.setDate(d.getDate()+7);
+      dueDate = toISODate(d);
+    } else if (/^daily$|^weekly$|^monthly$/i.test(p)) {
+      recurrence = p.toLowerCase();
+    } else {
+      nameParts.push(p);
+    }
+  });
+  return {
+    name: nameParts.join(' ').trim() || 'Untitled',
+    description: '',
+    project,
+    priority,
+    tags,
+    status,
+    recurrence,
+    dueDate
+  };
+}
+
+function toISODate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const day = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+// Density Toggle
+densityToggle.addEventListener('click', () => {
+  const compact = document.body.classList.toggle('compact');
+  densityToggle.textContent = compact ? 'Comfortable' : 'Compact';
+});
+
+// Manual reorder via drag-and-drop
+function enableManualReorder() {
+  let dragId = null;
+  taskList.addEventListener('dragstart', (e) => {
+    const li = e.target.closest('.task-item');
+    if (!li) return;
+    dragId = parseInt(li.dataset.id);
+  });
+  taskList.addEventListener('dragover', (e) => {
+    e.preventDefault();
+  });
+  taskList.addEventListener('drop', async (e) => {
+    e.preventDefault();
+    const targetLi = e.target.closest('.task-item');
+    if (!targetLi || dragId == null) return;
+    const targetId = parseInt(targetLi.dataset.id);
+    reorderTasks(dragId, targetId);
+    dragId = null;
+    await saveData();
+    renderTasks();
+  }, { once: true });
+}
+
+function reorderTasks(sourceId, targetId) {
+  ensureOrders();
+  const src = tasks.find(t => t.id === sourceId);
+  const tgt = tasks.find(t => t.id === targetId);
+  if (!src || !tgt) return;
+  const srcOrder = src.order;
+  const tgtOrder = tgt.order;
+  // Move src to just before tgt
+  tasks.forEach(t => {
+    if (t.id === sourceId) return;
+    if (srcOrder < tgtOrder) {
+      // moving down
+      if (t.order > srcOrder && t.order <= tgtOrder) t.order -= 1;
+    } else if (srcOrder > tgtOrder) {
+      // moving up
+      if (t.order < srcOrder && t.order >= tgtOrder) t.order += 1;
+    }
+  });
+  src.order = tgtOrder;
+}
+
+function ensureOrders() {
+  let i = 1;
+  tasks.sort((a,b) => (a.order ?? 0) - (b.order ?? 0)).forEach(t => { t.order = i++; });
+}
+
+function nextOrderValue() {
+  const max = tasks.reduce((m, t) => Math.max(m, t.order ?? 0), 0);
+  return max + 1;
+}
+
+// Board View Rendering
+function renderBoard() {
+  emptyState.style.display = 'none';
+  const byStatus = { todo: [], in_progress: [], done: [] };
+  tasks.forEach(t => {
+    const status = t.status || (t.completed ? 'done' : 'todo');
+    byStatus[status] ? byStatus[status].push(t) : byStatus['todo'].push(t);
+  });
+
+  boardContainer.innerHTML = `
+    ${renderBoardColumn(`To Do (${byStatus.todo.length})`, 'todo', byStatus.todo)}
+    ${renderBoardColumn(`In Progress (${byStatus.in_progress.length}/${WIP_LIMIT_IN_PROGRESS})`, 'in_progress', byStatus.in_progress)}
+    ${renderBoardColumn(`Done (${byStatus.done.length})`, 'done', byStatus.done)}
+  `;
+
+  setupDragAndDrop();
+}
+
+function renderBoardColumn(title, key, items) {
+  const cards = items.map(task => {
+    const isOverdue = task.dueDate && task.dueDate < new Date().toISOString().split('T')[0] && !task.completed;
+    const tagsHtml = task.tags && task.tags.length > 0 
+      ? `<div class="task-tags">${task.tags.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`
+      : '';
+    return `
+      <div class="task-item draggable" draggable="true" data-id="${task.id}">
+        <div class="task-content">
+          <div class="task-name">${escapeHtml(task.name)}</div>
+          <div class="task-meta">
+            <span class="task-priority priority-${task.priority.toLowerCase()}">${task.priority}</span>
+            <span class="task-project">${task.project}</span>
+            ${task.dueDate ? `<span class="task-due ${isOverdue ? 'overdue' : ''}">📅 ${formatDate(task.dueDate)}</span>` : ''}
+          </div>
+          ${tagsHtml}
+        </div>
+        <div class="task-actions">
+          <button class="task-btn task-btn-edit" data-id="${task.id}" title="Edit">✏️</button>
+          <button class="task-btn task-btn-delete" data-id="${task.id}" title="Delete">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="board-column" data-status="${key}">
+      <h4>${title}</h4>
+      <div class="board-list" data-status="${key}">${cards || '<div class="drop-target">Drop tasks here</div>'}</div>
+    </div>
+  `;
+}
+
+function setupDragAndDrop() {
+  let draggedId = null;
+  boardContainer.querySelectorAll('.draggable').forEach(card => {
+    card.addEventListener('dragstart', (e) => {
+      draggedId = parseInt(card.dataset.id);
+      e.dataTransfer.effectAllowed = 'move';
+    });
+  });
+
+  boardContainer.querySelectorAll('.board-list').forEach(list => {
+    list.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+    });
+    list.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      if (draggedId == null) return;
+      const status = list.dataset.status;
+      // WIP limit check
+      if (status === 'in_progress') {
+        const currentCount = tasks.filter(t => (t.status || (t.completed ? 'done':'todo')) === 'in_progress').length;
+        if (currentCount >= WIP_LIMIT_IN_PROGRESS) {
+          alert('WIP limit reached for In Progress');
+          draggedId = null;
+          return;
+        }
+      }
+      const task = tasks.find(t => t.id === draggedId);
+      if (task) {
+        task.status = status;
+        task.completed = status === 'done';
+        // Recurrence on moving to done
+        if (task.completed && task.recurrence && task.recurrence !== 'none' && task.dueDate) {
+          const nextDate = nextRecurrenceDate(task.dueDate, task.recurrence);
+          if (nextDate) {
+            tasks.push({
+              id: Date.now() + Math.floor(Math.random()*1000),
+              name: task.name,
+              description: task.description,
+              priority: task.priority,
+              project: task.project,
+              dueDate: nextDate,
+              status: 'todo',
+              recurrence: task.recurrence,
+              tags: task.tags || [],
+              completed: false,
+              createdAt: new Date().toISOString()
+            });
+          }
+        }
+        await saveData();
+        renderBoard();
+        renderStats();
+      }
+      draggedId = null;
+    });
+  });
+
+  // Rebind edit/delete within board
+  boardContainer.querySelectorAll('.task-btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = parseInt(btn.dataset.id);
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        editingId = task.id;
+        taskInput.value = task.name;
+        taskDescription.value = task.description || '';
+        taskPriority.value = task.priority;
+        taskProject.value = task.project;
+        taskDueDate.value = task.dueDate || '';
+        taskStatus.value = task.status || 'todo';
+        taskRecurrence.value = task.recurrence || 'none';
+        taskTags.value = (task.tags || []).join(', ');
+        modalTitle.textContent = 'Edit Task';
+        taskModal.style.display = 'flex';
+      }
+    });
+  });
+  boardContainer.querySelectorAll('.task-btn-delete').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = parseInt(btn.dataset.id);
+      if (confirm('Delete this task?')) {
+        tasks = tasks.filter(t => t.id !== id);
+        await saveData();
+        renderBoard();
+        renderStats();
+      }
+    });
+  });
+}
+
+// Calendar View Rendering
+function renderCalendar() {
+  emptyState.style.display = 'none';
+  const base = new Date();
+  base.setMonth(base.getMonth() + calendarMonthOffset);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const days = getMonthDays(year, month);
+
+  const headerHtml = `
+    <div class="calendar-header">
+      <div>
+        <button class="btn btn-secondary" id="cal-prev">Prev</button>
+        <button class="btn btn-secondary" id="cal-next">Next</button>
+      </div>
+      <strong>${base.toLocaleString('en-US', { month: 'long' })} ${year}</strong>
+      <span style="color: var(--text-muted);">Week starts Mon</span>
+    </div>
+  `;
+
+  const gridHtml = days.map(d => {
+    const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d.day).padStart(2,'0')}`;
+    const dayTasks = tasks.filter(t => t.dueDate === dateStr);
+    const tasksHtml = dayTasks.map(t => `<span class="calendar-task">${escapeHtml(t.name)}</span>`).join('');
+    return `
+      <div class="calendar-day">
+        <div class="day-label">${d.day}</div>
+        ${tasksHtml}
+      </div>
+    `;
+  }).join('');
+
+  calendarContainer.innerHTML = headerHtml + `<div class="calendar-grid">${gridHtml}</div>`;
+  const prev = document.getElementById('cal-prev');
+  const next = document.getElementById('cal-next');
+  prev.addEventListener('click', () => { calendarMonthOffset -= 1; renderCalendar(); });
+  next.addEventListener('click', () => { calendarMonthOffset += 1; renderCalendar(); });
+}
+
+function getMonthDays(year, month) {
+  const first = new Date(year, month, 1);
+  const last = new Date(year, month + 1, 0);
+  const days = [];
+  for (let d = 1; d <= last.getDate(); d++) {
+    days.push({ day: d });
+  }
+  return days;
+}
+
+// Recurrence helper
+function nextRecurrenceDate(dateStr, recurrence) {
+  try {
+    const d = new Date(dateStr + 'T00:00:00');
+    if (recurrence === 'daily') d.setDate(d.getDate() + 1);
+    else if (recurrence === 'weekly') d.setDate(d.getDate() + 7);
+    else if (recurrence === 'monthly') d.setMonth(d.getMonth() + 1);
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  } catch {
+    return null;
+  }
+}
